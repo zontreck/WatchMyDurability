@@ -62,17 +62,17 @@ public class ItemRegistry {
     public static boolean contains(String type, Integer slot, Item getNewItem) {
         ItemRegistry reg = WatchMyDurability.REGISTRY;
         if(reg.CachedItems.containsKey(type)){
-            WatchMyDurability.LOGGER.debug("Registry contains "+type);
+            //WatchMyDurability.LOGGER.debug("Registry contains "+type);
             Map<Integer,Item> items = reg.CachedItems.get(type);
             if(items.containsKey(slot)){
-                WatchMyDurability.LOGGER.debug("ItemRegistry contains slot: "+slot);
+                //WatchMyDurability.LOGGER.debug("ItemRegistry contains slot: "+slot);
                 Item x = items.get(slot);
                 if(x.Compare(getNewItem)){
-                    WatchMyDurability.LOGGER.debug("Items are identical!");
+                    //WatchMyDurability.LOGGER.debug("Items are identical!");
                     // Items are identical
                     return true;
                 }else {
-                    WatchMyDurability.LOGGER.debug("ITEMS ARE NOT IDENTICAL");
+                    //WatchMyDurability.LOGGER.debug("ITEMS ARE NOT IDENTICAL");
                     return false;
                 }
             }else return false;
