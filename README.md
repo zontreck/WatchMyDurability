@@ -16,3 +16,4 @@ The following is the possible roadmap:
 
 1. Create a spigot plugin variant.
 2. Explore possibly making a quilt mod variant.
+3. Create a permission that a server owner can set to block this mod from functioning on the client.
