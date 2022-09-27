@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
+import dev.zontreck.mcmods.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
@@ -20,19 +20,25 @@ public class CheckInventory  extends TimerTask
     @Override
     public void run() {
 
-        if(!WatchMyDurability.isInGame)return;
-        //WatchMyDurability.LOGGER.info("TICKING CHECK INVENTORY EVENT");
-        // Get the player inventory
-        Inventory inv = WatchMyDurability._player.getInventory();
-        
-        if(checkList("_armor", inv.armor)) Soundify();
-        if(checkList("_items", inv.items)) Soundify();
-        if(checkList("_offhand", inv.offhand)) Soundify();
-        
+        try {
+                
+            if(!WatchMyDurability.isInGame)return;
+            //WatchMyDurability.LOGGER.info("TICKING CHECK INVENTORY EVENT");
+            // Get the player inventory
+            Inventory inv = Minecraft.getInstance().player.getInventory();
+            
+            checkList("_armor", inv.armor);
+            checkList("_items", inv.items);
+            checkList("_offhand", inv.offhand);
+            
 
-        PushItems("_armor", inv.armor);
-        PushItems("_items", inv.items);
-        PushItems("_offhand", inv.offhand);
+            PushItems("_armor", inv.armor);
+            PushItems("_items", inv.items);
+            PushItems("_offhand", inv.offhand);
+        } catch (Exception e) {
+            WatchMyDurability.LOGGER.warn(": : : : [ERROR] : : : :");
+            WatchMyDurability.LOGGER.warn("A error in the WatchMyDurability timer code has occurred. This could happen with hub worlds and the server transfers that occur. If this happened in another instance, please report this error to the developer, along with what you were doing.");
+        }
 
     }
 
@@ -54,14 +60,15 @@ public class CheckInventory  extends TimerTask
         ItemRegistry.register(type,items);
     }
 
-    public void Soundify()
+    public void Soundify(SoundEvent sound)
     {
         //WatchMyDurability.LOGGER.info("PLAY ALERT SOUND");
-        WatchMyDurability._player.playSound(SoundEvents.ITEM_BREAK, 1.0f, 1.0f);
+        Minecraft.getInstance().player.playSound(sound, 1.0f, 1.0f);
     }
 
-    public boolean checkList(String type, NonNullList<ItemStack> stacks){
+    public void checkList(String type, NonNullList<ItemStack> stacks){
         Integer slotNum = 0;
+        //boolean ret=false;
         for (ItemStack is1 : stacks) {
             if(is1.isDamageableItem() && is1.isDamaged() && !ItemRegistry.contains(type, slotNum, WatchMyDurability.REGISTRY.GetNewItem(is1))){
 
@@ -72,19 +79,27 @@ public class CheckInventory  extends TimerTask
                 percent = cur * 100 / max;
 
                 //WatchMyDurability.LOGGER.debug("ITEM DURABILITY: "+cur+"; MAXIMUM: "+max+"; PERCENT: "+percent);
-                if(percent <= 10)
-                {
-                    Component X = Component.literal(is1.getDisplayName().getString()+" is about to break!");
-                    WatchMyDurability._player.displayClientMessage(X, false);
-                    // Play Sound
-                    return true;
-                } else return false;
+                for (Integer entry : WMDClientConfig.alertPercents.get()) {
+                    Integer idx = WMDClientConfig.alertPercents.get().indexOf(entry);
+                    String entryStr = WMDClientConfig.alertMessages.get().get(idx);
+
+                    if(percent <= entry){
+                        String replaced = entryStr.replaceAll("!item!", is1.getDisplayName().getString());
+                        WatchMyDurability.LOGGER.info("Enqueue alert for an item. Playing sound for item: "+is1.getDisplayName().getString());
+                        
+                        SoundEvent theSound = SoundEvents.ITEM_BREAK;
+                        Soundify(theSound);
+                            
+                        Component X = Component.literal(replaced);
+                        Minecraft.getInstance().player.displayClientMessage(X, false);
+                        break; // Rule applies, break out of this loop, move to next item.
+                    }
+                }
             }
 
             slotNum ++;
         }
-
-        return false;
+        //return ret;
     }
 
 }

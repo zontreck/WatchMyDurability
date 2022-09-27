@@ -46,7 +46,7 @@ This mod watches durability of an item.
 
 This is most useful for armor or weapons to alert you to the fact that your armor or weapon might break soon.
 
-At 10% or less of maximum durability, you will be alerted.
+Edit the config file to customize the alerts
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.watchmydurability]] #optional
@@ -59,7 +59,7 @@ At 10% or less of maximum durability, you will be alerted.
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
-    side="BOTH"
+    side="CLIENT"
 # Here's another dependency
 [[dependencies.watchmydurability]]
     modId="minecraft"
@@ -67,4 +67,4 @@ At 10% or less of maximum durability, you will be alerted.
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
     versionRange="[1.19.2,1.20)"
     ordering="NONE"
-    side="BOTH"
+    side="CLIENT"

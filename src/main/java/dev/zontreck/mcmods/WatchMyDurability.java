@@ -1,18 +1,20 @@
 package dev.zontreck.mcmods;
 
 import com.mojang.logging.LogUtils;
+
+import dev.zontreck.mcmods.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 
 import java.util.Timer;
@@ -31,7 +33,6 @@ public class WatchMyDurability
     /// DO NOT USE FROM ANY THIRD PARTY PACKAGES
     public static User CurrentUser = null; // This is initialized by the client
     public static boolean isInGame = false; // This locks the timer thread
-    public static LocalPlayer _player = null; // Updated on login!
     public static ItemRegistry REGISTRY;
 
     
@@ -42,6 +43,7 @@ public class WatchMyDurability
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+        ModLoadingContext.get().registerConfig(Type.CLIENT, WMDClientConfig.SPEC, "watchmydurability-client.toml");
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -70,13 +72,13 @@ public class WatchMyDurability
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            //LOGGER.info(": : : CLIENT SETUP : : :");
+            LOGGER.info(": : : CLIENT SETUP : : :");
             // Some client setup code
             //LOGGER.info("HELLO FROM CLIENT SETUP");
             //LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
             WatchMyDurability.CurrentUser = Minecraft.getInstance().getUser();
             
-            time.schedule(new CheckInventory(), 10000, 10000);
+            time.schedule(new CheckInventory(), WMDClientConfig.TimerVal.get()*1000, WMDClientConfig.TimerVal.get()*1000);
 
             ItemRegistry.Initialize();
             
@@ -91,14 +93,22 @@ public class WatchMyDurability
         public static void onJoin(ClientPlayerNetworkEvent.LoggingIn event){
             // Joined
             //LOGGER.info("PLAYER LOGGED IN");
-            WatchMyDurability._player = event.getPlayer();
+            LOGGER.info(": : : PLAYER LOGGED IN : : :");
             WatchMyDurability.isInGame=true;
         }
     
         @SubscribeEvent
         public static void onLeave(ClientPlayerNetworkEvent.LoggingOut event){
             //LOGGER.info("PLAYER LOGGED OUT");
+            LOGGER.info(": : : PLAYER LOGGED OUT : : :");
             WatchMyDurability.isInGame=false;
+        }
+
+        @SubscribeEvent
+        public static void onClone(ClientPlayerNetworkEvent.Clone event)
+        {
+            LOGGER.info(": : : : PLAYER RESPAWNED OR MOVED TO A NEW WORLD : : : :");
+            
         }
     }
 }
