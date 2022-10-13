@@ -2,7 +2,10 @@ package dev.zontreck.mcmods;
 
 import com.mojang.logging.LogUtils;
 
+import dev.zontreck.libzontreck.chat.ChatColorFactory;
+import dev.zontreck.libzontreck.chat.ChatColor.ColorOptions;
 import dev.zontreck.mcmods.configs.WMDClientConfig;
+import dev.zontreck.mcmods.gui.HeartsRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,17 +37,21 @@ public class WatchMyDurability
     public static User CurrentUser = null; // This is initialized by the client
     public static boolean isInGame = false; // This locks the timer thread
     public static ItemRegistry REGISTRY;
+    public static Health LastHealth;
+    public static String WMDPrefix;
 
     
 
     public WatchMyDurability()
     {
+        WMDPrefix = ChatColorFactory.MakeBuilder().set(ColorOptions.Dark_Gray).toString() + "[" + ChatColorFactory.MakeBuilder().set(ColorOptions.Dark_Green) + "WMD"  + ChatColorFactory.MakeBuilder().set(ColorOptions.Dark_Gray)  + "]";
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
         ModLoadingContext.get().registerConfig(Type.CLIENT, WMDClientConfig.SPEC, "watchmydurability-client.toml");
-
+        
+        MinecraftForge.EVENT_BUS.register(new HeartsRenderer());
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }

@@ -21,6 +21,9 @@ public class ItemRegistry {
         }
     }
 
+    public class Health {
+    }
+
 
     public Map<String,Map<Integer, Item>> CachedItems;
     public ItemRegistry()
