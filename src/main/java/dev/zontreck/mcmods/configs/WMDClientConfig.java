@@ -24,7 +24,7 @@ public class WMDClientConfig {
         
 
         BUILDER.push("Alerts");
-        BUILDER.comment("Both of the following lists must have the same number of entries. NOTE: Percents do NOT stack. After the first rule is applied, it will move to the next item, so please make the list ascend, and not descend.  Example: 10, 50").define("VERSION", "1.0.0");
+        BUILDER.comment("Both of the following lists must have the same number of entries. NOTE: Percents do NOT stack. After the first rule is applied, it will move to the next item, so please make the list ascend, and not descend.  Example: 10, 50").define("VERSION", "1.1.1.1");
 
         alertPercents = BUILDER.comment("The list of alerts you want at what percentages of remaining durability").define("Percents", alerts1);
         alertMessages = BUILDER.comment("The messages you want displayed when a alert is triggered. You must have the same amount of messages as alerts").define("Messages", alerts2);
