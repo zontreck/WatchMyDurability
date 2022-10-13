@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
+import dev.zontreck.libzontreck.chat.ChatColor;
+import dev.zontreck.libzontreck.chat.ChatColorFactory;
+import dev.zontreck.libzontreck.chat.ChatColor.ColorOptions;
 import dev.zontreck.mcmods.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
@@ -38,6 +41,25 @@ public class CheckInventory  extends TimerTask
         } catch (Exception e) {
             WatchMyDurability.LOGGER.warn(": : : : [ERROR] : : : :");
             WatchMyDurability.LOGGER.warn("A error in the WatchMyDurability timer code has occurred. This could happen with hub worlds and the server transfers that occur. If this happened in another instance, please report this error to the developer, along with what you were doing.");
+        }
+
+
+        // Hijack this timer so we dont need to register yet another
+        if(!WMDClientConfig.EnableHealthAlert.get())return;
+        Health current = Health.of(Minecraft.getInstance().player);
+        if(WatchMyDurability.LastHealth == null)WatchMyDurability.LastHealth = current;
+        else{
+            if(current.identical(WatchMyDurability.LastHealth))return;
+        }
+
+        // Good to proceed
+        if(current.shouldGiveAlert())
+        {
+            
+            Minecraft.getInstance().player.displayClientMessage(Component.literal(ChatColorFactory.MakeBuilder().set(ColorOptions.Dark_Red).set(ColorOptions.Bold).toString()+"You need to eat!"), false);
+
+            SoundEvent sv = SoundEvents.WARDEN_ROAR;
+            Soundify(sv);
         }
 
     }
@@ -84,7 +106,7 @@ public class CheckInventory  extends TimerTask
                     String entryStr = WMDClientConfig.alertMessages.get().get(idx);
 
                     if(percent <= entry){
-                        String replaced = entryStr.replaceAll("!item!", is1.getDisplayName().getString());
+                        String replaced = WatchMyDurability.WMDPrefix + ChatColor.DARK_RED + entryStr.replaceAll("!item!", is1.getDisplayName().getString());
                         WatchMyDurability.LOGGER.info("Enqueue alert for an item. Playing sound for item: "+is1.getDisplayName().getString());
                         
                         SoundEvent theSound = SoundEvents.ITEM_BREAK;

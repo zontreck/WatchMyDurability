@@ -12,6 +12,9 @@ public class WMDClientConfig {
     public static ForgeConfigSpec.ConfigValue<List<Integer>> alertPercents;
     public static ForgeConfigSpec.ConfigValue<List<String>> alertMessages;
     public static ForgeConfigSpec.ConfigValue<Integer> TimerVal;
+    public static ForgeConfigSpec.ConfigValue<Boolean> EnableExtraHearts;
+    public static ForgeConfigSpec.ConfigValue<Boolean> EnableHealthAlert;
+
     static{
         List<Integer> alerts1 = new ArrayList<>();
         alerts1.add(10);
@@ -28,6 +31,12 @@ public class WMDClientConfig {
         TimerVal = BUILDER.comment("How many seconds between timer ticks to check your inventory items?").define("Timer", 5);
 
         BUILDER.pop();
+
+        BUILDER.push("General");
+        EnableExtraHearts = BUILDER.comment("Whether to enable the extra hearts rendering").define("compress_hearts", false);
+        EnableHealthAlert = BUILDER.comment("The following was added for a friend. If you need reminders to eat in order to heal, turn the below option on").define("watchMyHunger", false);
+
+
         SPEC=BUILDER.build();
     }
 }
