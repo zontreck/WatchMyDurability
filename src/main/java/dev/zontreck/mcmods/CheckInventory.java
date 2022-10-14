@@ -55,12 +55,14 @@ public class CheckInventory  extends TimerTask
         // Good to proceed
         if(current.shouldGiveAlert())
         {
-            
-            Minecraft.getInstance().player.displayClientMessage(Component.literal(ChatColorFactory.MakeBuilder().set(ColorOptions.Dark_Red).set(ColorOptions.Bold).toString()+"You need to eat!"), false);
+            String Msg = ChatColor.doColors("!Dark_Red!!bold!You need to eat!");
+            Minecraft.getInstance().player.displayClientMessage(Component.literal(Msg), false);
 
-            SoundEvent sv = SoundEvents.WARDEN_ROAR;
+            SoundEvent sv = SoundEvents.WARDEN_ROAR; // It sounds like a growling stomach
             Soundify(sv);
         }
+
+        WatchMyDurability.LastHealth=current;
 
     }
 
@@ -111,7 +113,8 @@ public class CheckInventory  extends TimerTask
                         
                         SoundEvent theSound = SoundEvents.ITEM_BREAK;
                         Soundify(theSound);
-                            
+                        
+                        
                         Component X = Component.literal(replaced);
                         Minecraft.getInstance().player.displayClientMessage(X, false);
                         break; // Rule applies, break out of this loop, move to next item.

@@ -2,8 +2,7 @@ package dev.zontreck.mcmods;
 
 import com.mojang.logging.LogUtils;
 
-import dev.zontreck.libzontreck.chat.ChatColorFactory;
-import dev.zontreck.libzontreck.chat.ChatColor.ColorOptions;
+import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.mcmods.configs.WMDClientConfig;
 import dev.zontreck.mcmods.gui.HeartsRenderer;
 import net.minecraft.client.Minecraft;
@@ -44,7 +43,8 @@ public class WatchMyDurability
 
     public WatchMyDurability()
     {
-        WMDPrefix = ChatColorFactory.MakeBuilder().set(ColorOptions.Dark_Gray).toString() + "[" + ChatColorFactory.MakeBuilder().set(ColorOptions.Dark_Green) + "WMD"  + ChatColorFactory.MakeBuilder().set(ColorOptions.Dark_Gray)  + "]";
+        WatchMyDurability.WMDPrefix = ChatColor.doColors("!Dark_Gray![!Bold!!Dark_Green!WMD!Reset!!Dark_Gray!]!reset!");
+        
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         // Register the commonSetup method for modloading
@@ -79,7 +79,7 @@ public class WatchMyDurability
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            LOGGER.info(": : : CLIENT SETUP : : :");
+            LOGGER.info(WMDPrefix+": : : CLIENT SETUP : : :");
             // Some client setup code
             //LOGGER.info("HELLO FROM CLIENT SETUP");
             //LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
@@ -100,21 +100,21 @@ public class WatchMyDurability
         public static void onJoin(ClientPlayerNetworkEvent.LoggingIn event){
             // Joined
             //LOGGER.info("PLAYER LOGGED IN");
-            LOGGER.info(": : : PLAYER LOGGED IN : : :");
+            LOGGER.info(WMDPrefix+": : : PLAYER LOGGED IN : : :");
             WatchMyDurability.isInGame=true;
         }
     
         @SubscribeEvent
         public static void onLeave(ClientPlayerNetworkEvent.LoggingOut event){
             //LOGGER.info("PLAYER LOGGED OUT");
-            LOGGER.info(": : : PLAYER LOGGED OUT : : :");
+            LOGGER.info(WMDPrefix+": : : PLAYER LOGGED OUT : : :");
             WatchMyDurability.isInGame=false;
         }
 
         @SubscribeEvent
         public static void onClone(ClientPlayerNetworkEvent.Clone event)
         {
-            LOGGER.info(": : : : PLAYER RESPAWNED OR MOVED TO A NEW WORLD : : : :");
+            LOGGER.info(WMDPrefix+": : : : PLAYER RESPAWNED OR MOVED TO A NEW WORLD : : : :");
             
         }
     }

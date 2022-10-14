@@ -5,7 +5,7 @@ plugins {
 }
 
 version = "${myversion}"
-group = 'dev.zontreck.mcmods' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'dev.zontreck' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'WatchMyDurability'
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -135,9 +135,10 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    implementation fg.deobf("dev.zontreck:libzontreck:1.0.0.1:dev")
-    runtimeOnly fg.deobf("dev.zontreck:libzontreck:1.0.0.1")
-    compileOnly fg.deobf("dev.zontreck:libzontreck:1.0.0.1:dev")
+    implementation fg.deobf("dev.zontreck:libzontreck:${libz_version}:dev")
+    runtimeOnly fg.deobf("dev.zontreck:libzontreck:${libz_version}")
+    compileOnly fg.deobf("dev.zontreck:libzontreck:${libz_version}:dev")
+    
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
