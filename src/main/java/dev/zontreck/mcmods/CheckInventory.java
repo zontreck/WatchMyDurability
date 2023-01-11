@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
+import org.apache.logging.log4j.core.config.builder.api.ComponentBuilder;
+
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.libzontreck.chat.ChatColorFactory;
 import dev.zontreck.libzontreck.chat.ChatColor.ColorOptions;
@@ -12,6 +14,7 @@ import dev.zontreck.mcmods.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
@@ -56,9 +59,9 @@ public class CheckInventory  extends TimerTask
         if(current.shouldGiveAlert())
         {
             String Msg = ChatColor.doColors("!Dark_Red!!bold!You need to eat!");
-            Minecraft.getInstance().player.displayClientMessage(Component.literal(Msg), false);
+            Minecraft.getInstance().player.displayClientMessage(new TextComponent(Msg), false);
 
-            SoundEvent sv = SoundEvents.WARDEN_ROAR; // It sounds like a growling stomach
+            SoundEvent sv = SoundEvents.VILLAGER_HURT; // It sounds like a growling stomach
             Soundify(sv);
         }
 
@@ -115,7 +118,7 @@ public class CheckInventory  extends TimerTask
                         Soundify(theSound);
                         
                         
-                        Component X = Component.literal(replaced);
+                        Component X = new TextComponent(replaced);
                         Minecraft.getInstance().player.displayClientMessage(X, false);
                         break; // Rule applies, break out of this loop, move to next item.
                     }

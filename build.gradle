@@ -4,7 +4,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
-version = "${myversion}"
+version = "${mc_version}-${myversion}"
 group = 'dev.zontreck' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'WatchMyDurability'
 
@@ -135,9 +135,9 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    implementation fg.deobf("dev.zontreck:libzontreck:${libz_version}:dev")
-    runtimeOnly fg.deobf("dev.zontreck:libzontreck:${libz_version}")
-    compileOnly fg.deobf("dev.zontreck:libzontreck:${libz_version}:dev")
+    implementation fg.deobf("dev.zontreck:libzontreck:${mc_version}-${libz_version}:dev")
+    runtimeOnly fg.deobf("dev.zontreck:libzontreck:${mc_version}-${libz_version}")
+    compileOnly fg.deobf("dev.zontreck:libzontreck:${mc_version}-${libz_version}:dev")
     
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
