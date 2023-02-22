@@ -7,11 +7,16 @@ import java.util.TimerTask;
 
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.libzontreck.chat.ChatColorFactory;
+import dev.zontreck.libzontreck.chat.HoverTip;
 import dev.zontreck.libzontreck.chat.ChatColor.ColorOptions;
 import dev.zontreck.mcmods.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
@@ -56,9 +61,10 @@ public class CheckInventory  extends TimerTask
         if(current.shouldGiveAlert())
         {
             String Msg = ChatColor.doColors("!Dark_Red!!bold!You need to eat!");
-            Minecraft.getInstance().player.displayClientMessage(Component.literal(Msg), false);
+            Component chat = new TextComponent(Msg);
+            Minecraft.getInstance().player.displayClientMessage(chat, false);
 
-            SoundEvent sv = SoundEvents.WARDEN_ROAR; // It sounds like a growling stomach
+            SoundEvent sv = SoundEvents.WOLF_GROWL; // It sounds like a growling stomach
             Soundify(sv);
         }
 
@@ -115,7 +121,14 @@ public class CheckInventory  extends TimerTask
                         Soundify(theSound);
                         
                         
-                        Component X = Component.literal(replaced);
+                        
+                        MutableComponent X = new TextComponent(replaced);
+                        
+                        HoverEvent he = HoverTip.getItem(is1);
+                        Style s = Style.EMPTY.withFont(Style.DEFAULT_FONT).withHoverEvent(he);
+                        X=X.withStyle(s);
+
+
                         Minecraft.getInstance().player.displayClientMessage(X, false);
                         break; // Rule applies, break out of this loop, move to next item.
                     }

@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.mcmods.configs.WMDClientConfig;
-import dev.zontreck.mcmods.gui.HeartsRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,6 +17,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedInEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedOutEvent;
 
 import java.util.Timer;
 
@@ -51,7 +52,7 @@ public class WatchMyDurability
         modEventBus.addListener(this::commonSetup);
         ModLoadingContext.get().registerConfig(Type.CLIENT, WMDClientConfig.SPEC, "watchmydurability-client.toml");
         
-        MinecraftForge.EVENT_BUS.register(new HeartsRenderer());
+        //MinecraftForge.EVENT_BUS.register(new HeartsRenderer());
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -97,7 +98,7 @@ public class WatchMyDurability
     {
     
         @SubscribeEvent
-        public static void onJoin(ClientPlayerNetworkEvent.LoggingIn event){
+        public static void onJoin(LoggedInEvent event){
             // Joined
             //LOGGER.info("PLAYER LOGGED IN");
             LOGGER.info(WMDPrefix+": : : PLAYER LOGGED IN : : :");
@@ -105,14 +106,14 @@ public class WatchMyDurability
         }
     
         @SubscribeEvent
-        public static void onLeave(ClientPlayerNetworkEvent.LoggingOut event){
+        public static void onLeave(LoggedOutEvent event){
             //LOGGER.info("PLAYER LOGGED OUT");
             LOGGER.info(WMDPrefix+": : : PLAYER LOGGED OUT : : :");
             WatchMyDurability.isInGame=false;
         }
 
         @SubscribeEvent
-        public static void onClone(ClientPlayerNetworkEvent.Clone event)
+        public static void onClone(ClientPlayerNetworkEvent.RespawnEvent event)
         {
             LOGGER.info(WMDPrefix+": : : : PLAYER RESPAWNED OR MOVED TO A NEW WORLD : : : :");
             

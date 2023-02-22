@@ -12,7 +12,7 @@ public class WMDClientConfig {
     public static ForgeConfigSpec.ConfigValue<List<Integer>> alertPercents;
     public static ForgeConfigSpec.ConfigValue<List<String>> alertMessages;
     public static ForgeConfigSpec.ConfigValue<Integer> TimerVal;
-    public static ForgeConfigSpec.ConfigValue<Boolean> EnableExtraHearts;
+    //public static ForgeConfigSpec.ConfigValue<Boolean> EnableExtraHearts;
     public static ForgeConfigSpec.ConfigValue<Boolean> EnableHealthAlert;
 
     static{
@@ -33,7 +33,7 @@ public class WMDClientConfig {
         BUILDER.pop();
 
         BUILDER.push("General");
-        EnableExtraHearts = BUILDER.comment("Whether to enable the extra hearts rendering").define("compress_hearts", false);
+        //EnableExtraHearts = BUILDER.comment("Whether to enable the extra hearts rendering").define("compress_hearts", false);
         EnableHealthAlert = BUILDER.comment("The following was added for a friend. If you need reminders to eat in order to heal, turn the below option on").define("watchMyHunger", false);
 
 
