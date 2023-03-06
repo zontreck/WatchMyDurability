@@ -137,7 +137,6 @@ dependencies {
 
     implementation fg.deobf("dev.zontreck:libzontreck:${mc_version}-${libz_version}:dev")
     runtimeOnly fg.deobf("dev.zontreck:libzontreck:${mc_version}-${libz_version}")
-    compileOnly fg.deobf("dev.zontreck:libzontreck:${mc_version}-${libz_version}:dev")
     
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
@@ -157,9 +156,9 @@ jar {
         attributes([
                 "Specification-Title"     : "watchmydurability",
                 "Specification-Vendor"    : "Zontreck",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Specification-Version"   : "${myversion}", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Version"  : "${myversion}",
                 "Implementation-Vendor"   : "ZNI Creations",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
