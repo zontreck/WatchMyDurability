@@ -3,7 +3,7 @@ HOW TO BUILD
 
 On your platform of choice
 ```
-gradlew clean jar
+gradlew clean build
 ```
 
 

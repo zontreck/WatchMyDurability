@@ -2,11 +2,13 @@ package dev.zontreck.mcmods;
 
 import com.mojang.logging.LogUtils;
 
+import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.mcmods.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -17,11 +19,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedInEvent;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedOutEvent;
 
 import java.util.Timer;
 
+import net.minecraftforge.network.NetworkEvent;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -85,8 +86,13 @@ public class WatchMyDurability
             //LOGGER.info("HELLO FROM CLIENT SETUP");
             //LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
             WatchMyDurability.CurrentUser = Minecraft.getInstance().getUser();
+
+            DelayedExecutorService.getInstance().schedule(CheckInventory.getInstance(),
+                    WMDClientConfig.TimerVal.get());
             
-            time.schedule(new CheckInventory(), WMDClientConfig.TimerVal.get()*1000, WMDClientConfig.TimerVal.get()*1000);
+            //time.schedule(new CheckInventory(),
+                //WMDClientConfig.TimerVal.get()*1000,
+                //WMDClientConfig.TimerVal.get()*1000);
 
             ItemRegistry.Initialize();
             
@@ -98,22 +104,24 @@ public class WatchMyDurability
     {
     
         @SubscribeEvent
-        public static void onJoin(LoggedInEvent event){
+        public static void onJoin(ClientPlayerNetworkEvent.LoggingIn event){
             // Joined
             //LOGGER.info("PLAYER LOGGED IN");
             LOGGER.info(WMDPrefix+": : : PLAYER LOGGED IN : : :");
             WatchMyDurability.isInGame=true;
+
+            DelayedExecutorService.getInstance().schedule(CheckInventory.getInstance(), WMDClientConfig.TimerVal.get());
         }
     
         @SubscribeEvent
-        public static void onLeave(LoggedOutEvent event){
+        public static void onLeave(ClientPlayerNetworkEvent.LoggingOut event){
             //LOGGER.info("PLAYER LOGGED OUT");
             LOGGER.info(WMDPrefix+": : : PLAYER LOGGED OUT : : :");
             WatchMyDurability.isInGame=false;
         }
 
         @SubscribeEvent
-        public static void onClone(ClientPlayerNetworkEvent.RespawnEvent event)
+        public static void onClone(ClientPlayerNetworkEvent.Clone event)
         {
             LOGGER.info(WMDPrefix+": : : : PLAYER RESPAWNED OR MOVED TO A NEW WORLD : : : :");
             

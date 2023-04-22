@@ -71,6 +71,6 @@ Edit the config file to customize the alerts
 [[dependencies.watchmydurability]]
     modId="libzontreck"
     mandatory=true
-    versionRange="[1.0.5.0,1.0.6.0)"
+    versionRange="[1.0.6.0,1.0.7.0)"
     ordering="NONE"
     side="CLIENT"

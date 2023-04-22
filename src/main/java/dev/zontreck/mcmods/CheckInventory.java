@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
+import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.libzontreck.chat.ChatColorFactory;
 import dev.zontreck.libzontreck.chat.HoverTip;
@@ -16,21 +17,26 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public class CheckInventory  extends TimerTask
-{
+public class CheckInventory implements Runnable {
+    private static final CheckInventory inst = new CheckInventory();
 
+    public static CheckInventory getInstance(){
+        return inst;
+    }
     @Override
     public void run() {
 
         try {
                 
             if(!WatchMyDurability.isInGame)return;
+
+            DelayedExecutorService.getInstance().schedule(this,
+                    WMDClientConfig.TimerVal.get());
             //WatchMyDurability.LOGGER.info("TICKING CHECK INVENTORY EVENT");
             // Get the player inventory
             Inventory inv = Minecraft.getInstance().player.getInventory();
@@ -61,10 +67,10 @@ public class CheckInventory  extends TimerTask
         if(current.shouldGiveAlert())
         {
             String Msg = ChatColor.doColors("!Dark_Red!!bold!You need to eat!");
-            Component chat = new TextComponent(Msg);
+            Component chat = Component.literal(Msg);
             Minecraft.getInstance().player.displayClientMessage(chat, false);
 
-            SoundEvent sv = SoundEvents.WOLF_GROWL; // It sounds like a growling stomach
+            SoundEvent sv = SoundEvents.WARDEN_ROAR; // It sounds like a growling stomach
             Soundify(sv);
         }
 
@@ -122,7 +128,7 @@ public class CheckInventory  extends TimerTask
                         
                         
                         
-                        MutableComponent X = new TextComponent(replaced);
+                        MutableComponent X = Component.literal(replaced);
                         
                         HoverEvent he = HoverTip.getItem(is1);
                         Style s = Style.EMPTY.withFont(Style.DEFAULT_FONT).withHoverEvent(he);

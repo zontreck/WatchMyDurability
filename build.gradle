@@ -124,7 +124,7 @@ repositories {
     //     dir 'libs'
     // }
     maven {
-        name = "ZNI Creations"
+        name = "Aria's Creations"
         url = "https://maven.zontreck.dev"
     }
 }
@@ -186,4 +186,8 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+artifacts {
+    archives jar
 }
