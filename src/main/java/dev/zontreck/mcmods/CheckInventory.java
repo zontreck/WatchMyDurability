@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
+import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.libzontreck.chat.ChatColorFactory;
@@ -22,8 +23,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public class CheckInventory implements Runnable {
+public class CheckInventory extends Task {
     private static final CheckInventory inst = new CheckInventory();
+
+    public CheckInventory() {
+        super("checkinv", true);
+    }
 
     public static CheckInventory getInstance(){
         return inst;

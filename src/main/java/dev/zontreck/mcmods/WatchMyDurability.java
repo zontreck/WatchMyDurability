@@ -86,9 +86,8 @@ public class WatchMyDurability
             //LOGGER.info("HELLO FROM CLIENT SETUP");
             //LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
             WatchMyDurability.CurrentUser = Minecraft.getInstance().getUser();
+            DelayedExecutorService.setup();
 
-            DelayedExecutorService.getInstance().schedule(CheckInventory.getInstance(),
-                    WMDClientConfig.TimerVal.get());
             
             //time.schedule(new CheckInventory(),
                 //WMDClientConfig.TimerVal.get()*1000,
@@ -109,6 +108,7 @@ public class WatchMyDurability
             //LOGGER.info("PLAYER LOGGED IN");
             LOGGER.info(WMDPrefix+": : : PLAYER LOGGED IN : : :");
             WatchMyDurability.isInGame=true;
+            DelayedExecutorService.start();
 
             DelayedExecutorService.getInstance().schedule(CheckInventory.getInstance(), WMDClientConfig.TimerVal.get());
         }
@@ -118,6 +118,7 @@ public class WatchMyDurability
             //LOGGER.info("PLAYER LOGGED OUT");
             LOGGER.info(WMDPrefix+": : : PLAYER LOGGED OUT : : :");
             WatchMyDurability.isInGame=false;
+            DelayedExecutorService.stop();
         }
 
         @SubscribeEvent

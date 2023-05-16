@@ -2,6 +2,7 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
 version = "${mc_version}-${myversion}"
@@ -26,7 +27,8 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: "${mc_version}"
+    // mappings channel: 'official', version: "${mc_version}"
+    mappings channel: 'parchment', version: "${parchment_version}-${mc_version}"
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 
@@ -159,7 +161,7 @@ jar {
                 "Specification-Version"   : "${myversion}", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${myversion}",
-                "Implementation-Vendor"   : "ZNI Creations",
+                "Implementation-Vendor"   : "Aria's Creations",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
