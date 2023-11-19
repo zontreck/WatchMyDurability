@@ -38,8 +38,7 @@ public class CheckInventory extends Task {
                 
             if(!WatchMyDurability.isInGame)return;
 
-            DelayedExecutorService.getInstance().schedule(this,
-                    WMDClientConfig.TimerVal.get());
+
             //WatchMyDurability.LOGGER.info("TICKING CHECK INVENTORY EVENT");
             // Get the player inventory
             Inventory inv = Minecraft.getInstance().player.getInventory();

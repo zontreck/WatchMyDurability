@@ -119,8 +119,9 @@ public class WatchMyDurability
             WatchMyDurability.isInGame=true;
             DelayedExecutorService.start();
 
-            DelayedExecutorService.getInstance().schedule(CheckInventory.getInstance(), WMDClientConfig.TimerVal.get());
-            DelayedExecutorService.getInstance().schedule(CheckHealth.getInstance(), WMDClientConfig.TimerVal.get());
+            DelayedExecutorService.getInstance().scheduleRepeating(CheckInventory.getInstance(), WMDClientConfig.TimerVal.get());
+            DelayedExecutorService.getInstance().scheduleRepeating(CheckHealth.getInstance(), WMDClientConfig.TimerVal.get());
+            DelayedExecutorService.getInstance().scheduleRepeating(CheckHunger.getInstance(), WMDClientConfig.TimerVal.get());
         }
     
         @SubscribeEvent

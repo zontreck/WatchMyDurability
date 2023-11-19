@@ -1,6 +1,7 @@
 package dev.zontreck.mcmods;
 
 import dev.zontreck.ariaslib.terminal.Task;
+import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.mcmods.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,11 @@ import net.minecraft.sounds.SoundEvents;
 
 public class CheckHunger extends Task
 {
+    private static CheckHunger inst = new CheckHunger();
+    public static CheckHunger getInstance()
+    {
+        return inst;
+    }
     public CheckHunger()
     {
         super("CheckHunger", true);
@@ -19,7 +25,9 @@ public class CheckHunger extends Task
     public void run() {
         if(!WMDClientConfig.EnableHungerAlert.get()) return;
 
+
         Hunger current = Hunger.of(Minecraft.getInstance().player);
+        if(WatchMyDurability.LastHunger == null)WatchMyDurability.LastHunger = new Hunger();
 
         if(current.identical()) return;
         if(current.shouldGiveAlert())
