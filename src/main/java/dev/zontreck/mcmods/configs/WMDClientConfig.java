@@ -14,6 +14,7 @@ public class WMDClientConfig {
     public static ForgeConfigSpec.ConfigValue<Integer> TimerVal;
     //public static ForgeConfigSpec.ConfigValue<Boolean> EnableExtraHearts;
     public static ForgeConfigSpec.ConfigValue<Boolean> EnableHealthAlert;
+    public static ForgeConfigSpec.ConfigValue<Boolean> EnableHungerAlert;
 
     static{
         List<Integer> alerts1 = new ArrayList<>();
@@ -34,8 +35,8 @@ public class WMDClientConfig {
 
         BUILDER.push("General");
         //EnableExtraHearts = BUILDER.comment("Whether to enable the extra hearts rendering").define("compress_hearts", false);
-        EnableHealthAlert = BUILDER.comment("The following was added for a friend. If you need reminders to eat in order to heal, turn the below option on").define("watchMyHunger", false);
-
+        EnableHealthAlert = BUILDER.comment("The following was added for a friend. If you need reminders to eat in order to heal, turn the below option on").define("watchMyHealth", false);
+        EnableHungerAlert = BUILDER.comment("This is a newer setting to watch your hunger status instead of your hunger to alert when you need to eat").define("watchMyHunger", true);
 
         SPEC=BUILDER.build();
     }

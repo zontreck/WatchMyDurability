@@ -7,6 +7,7 @@ import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.mcmods.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -39,6 +40,7 @@ public class WatchMyDurability
     public static boolean isInGame = false; // This locks the timer thread
     public static ItemRegistry REGISTRY;
     public static Health LastHealth;
+    public static Hunger LastHunger;
     public static String WMDPrefix;
 
     
@@ -64,6 +66,12 @@ public class WatchMyDurability
         //LOGGER.info("HELLO FROM COMMON SETUP");
     }
 
+
+    public static void Soundify(SoundEvent sound)
+    {
+        //WatchMyDurability.LOGGER.info("PLAY ALERT SOUND");
+        Minecraft.getInstance().player.playSound(sound, 1.0f, 1.0f);
+    }
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
@@ -96,6 +104,7 @@ public class WatchMyDurability
             ItemRegistry.Initialize();
             
         }
+
     }
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -111,6 +120,7 @@ public class WatchMyDurability
             DelayedExecutorService.start();
 
             DelayedExecutorService.getInstance().schedule(CheckInventory.getInstance(), WMDClientConfig.TimerVal.get());
+            DelayedExecutorService.getInstance().schedule(CheckHealth.getInstance(), WMDClientConfig.TimerVal.get());
         }
     
         @SubscribeEvent

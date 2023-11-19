@@ -58,27 +58,6 @@ public class CheckInventory extends Task {
         }
 
 
-        // Hijack this timer so we dont need to register yet another
-        if(!WMDClientConfig.EnableHealthAlert.get())return;
-        Health current = Health.of(Minecraft.getInstance().player);
-        if(WatchMyDurability.LastHealth == null)WatchMyDurability.LastHealth = current;
-        else{
-            if(current.identical(WatchMyDurability.LastHealth))return;
-        }
-
-        // Good to proceed
-        if(current.shouldGiveAlert())
-        {
-            String Msg = ChatColor.doColors("!Dark_Red!!bold!You need to eat!");
-            Component chat = Component.literal(Msg);
-            Minecraft.getInstance().player.displayClientMessage(chat, false);
-
-            SoundEvent sv = SoundEvents.WARDEN_ROAR; // It sounds like a growling stomach
-            Soundify(sv);
-        }
-
-        WatchMyDurability.LastHealth=current;
-
     }
 
     public void PushItems(String type, List<ItemStack> stack)
@@ -97,12 +76,6 @@ public class CheckInventory extends Task {
         }
 
         ItemRegistry.register(type,items);
-    }
-
-    public void Soundify(SoundEvent sound)
-    {
-        //WatchMyDurability.LOGGER.info("PLAY ALERT SOUND");
-        Minecraft.getInstance().player.playSound(sound, 1.0f, 1.0f);
     }
 
     public void checkList(String type, NonNullList<ItemStack> stacks){
@@ -127,7 +100,7 @@ public class CheckInventory extends Task {
                         WatchMyDurability.LOGGER.info("Enqueue alert for an item. Playing sound for item: "+is1.getDisplayName().getString());
                         
                         SoundEvent theSound = SoundEvents.ITEM_BREAK;
-                        Soundify(theSound);
+                        WatchMyDurability.Soundify(theSound);
                         
                         
                         
