@@ -26,8 +26,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
@@ -41,6 +39,8 @@ import java.util.Random;
 public class HeartsRenderer {
     private static final ResourceLocation ICON_HEARTS = new ResourceLocation(WatchMyDurability.MODID,
             "textures/gui/hearts.png");
+    private static final ResourceLocation ICON_ABSORB = new ResourceLocation(WatchMyDurability.MODID,
+            "textures/gui/absorb.png");
     private static final ResourceLocation ICON_VANILLA = Gui.GUI_ICONS_LOCATION;
 
     private final Minecraft mc = Minecraft.getInstance();
@@ -64,64 +64,12 @@ public class HeartsRenderer {
      * @param width       Width to draw
      * @param height      Height to draw
      */
-    private void blit(GuiGraphics matrixStack, int x, int y, int textureX, int textureY, int width, int height) {
-        matrixStack.blit(ICON_HEARTS, x, y, textureX, textureY, width, height);
+    private void blit(GuiGraphics matrixStack, int x, int y, int textureX, int textureY, int width, int height, ResourceLocation resource) {
+        matrixStack.blit(resource, x, y, textureX, textureY, width, height);
     }
 
-    private void renderHearts(GuiGraphics pGuiGraphics, Player pPlayer, int pX, int pY, int pHeight, int pOffsetHeartIndex, float pMaxHealth, int pCurrentHealth, int pDisplayHealth, int pAbsorptionAmount, boolean pRenderHighlight) {
-        Random random = new Random();
-        HeartType hearttype = HeartType.forPlayer(pPlayer);
-        int offsetX = 9 * (pPlayer.level().getLevelData().isHardcore() ? 5 : 0);
-        int maxHearts = Mth.ceil((double)pMaxHealth / 2.0);
-        int absorbHearts = Mth.ceil((double)pAbsorptionAmount / 2.0);
-        int maxHealth = maxHearts * 2;
-
-        for(int i1 = maxHearts + absorbHearts - 1; i1 >= 0; --i1) {
-            int j1 = i1 / 10;
-            int k1 = i1 % 10;
-            int x = pX + k1 * 8;
-            int y = pY - j1; //* pHeight;
-            int row = y * pHeight;
-
-
-            if (pCurrentHealth + pAbsorptionAmount <= 4) {
-                y += random.nextInt(2);
-            }
-
-            if (i1 < maxHearts && i1 == pOffsetHeartIndex) {
-                y -= 2;
-            }
-
-            this.renderHeart(pGuiGraphics, HeartType.CONTAINER, x, y, offsetX, pRenderHighlight, false, 0);
-            int j2 = i1 * 2;
-            boolean flag = i1 >= maxHearts;
-            if (flag) {
-                int k2 = j2 - maxHealth;
-                if (k2 < pAbsorptionAmount) {
-                    boolean halfHeart = k2 + 1 == pAbsorptionAmount;
-                    this.renderHeart(pGuiGraphics, hearttype == HeartType.WITHERED ? hearttype : HeartType.ABSORBING, x, y, offsetX, false, halfHeart, row);
-                }
-            }
-
-            boolean flag3;
-            if (pRenderHighlight && j2 < pDisplayHealth) {
-                flag3 = j2 + 1 == pDisplayHealth;
-                this.renderHeart(pGuiGraphics, hearttype, x, y, offsetX, true, flag3, row);
-            }
-
-            if (j2 < pCurrentHealth) {
-                flag3 = j2 + 1 == pCurrentHealth;
-                this.renderHeart(pGuiGraphics, hearttype, x, y, offsetX, false, flag3, row);
-            }
-        }
-
-    }
-
-
-    private void renderHeart(GuiGraphics pGuiGraphics, HeartType pHeartType, int pX, int pY, int pYOffset, boolean pRenderHighlight, boolean pHalfHeart, int row) {
-        pGuiGraphics.blit(ICON_HEARTS, pX, pY, pHeartType.getX(row, pHalfHeart, pRenderHighlight), pHeartType.getY(), 9, 9);
-    }
     /* HUD */
+
     /**
      * Event listener
      *
@@ -152,91 +100,235 @@ public class HeartsRenderer {
         if (!(mc.gui instanceof ForgeGui gui) || mc.options.hideGui || !gui.shouldDrawSurvivalElements()) {
             return;
         }
+        Entity renderViewEnity = this.mc.getCameraEntity();
+        if (!(renderViewEnity instanceof Player player)) {
+            return;
+        }
+        gui.setupOverlayRenderState(true, false);
+
+        this.mc.getProfiler().push("health");
+
         // extra setup stuff from us
-        int X = this.mc.getWindow().getGuiScaledWidth() / 2 - 91;
-        int Y = this.mc.getWindow().getGuiScaledHeight() / 2 + 91;
+        int left_height = gui.leftHeight;
+        int width = this.mc.getWindow().getGuiScaledWidth();
+        int height = this.mc.getWindow().getGuiScaledHeight();
         int updateCounter = this.mc.gui.getGuiTicks();
-        long healthBlinkTime = this.mc.gui.healthBlinkTime;
-        int height = Math.max(10 - (Y - 2), 3);
-        int offset = -1;
-        Player player = Minecraft.getInstance().player;
-        int lastHealth = Minecraft.getInstance().gui.lastHealth;
-        int displayHealth = Minecraft.getInstance().gui.displayHealth;
-        boolean flag = healthBlinkTime > (long)updateCounter && (healthBlinkTime - (long)updateCounter) / 3L % 2L == 1L;
 
-        float maxHealth = Math.max((float)player.getAttributeValue(Attributes.MAX_HEALTH), (float)Math.max(displayHealth, lastHealth));
-        int absorb = Mth.ceil(player.getAbsorptionAmount());
+        // start default forge/mc rendering
+        // changes are indicated by comment
 
-        if (player.hasEffect(MobEffects.REGENERATION)) {
-            offset = updateCounter % Mth.ceil(maxHealth + 5.0F);
+        int health = Mth.ceil(player.getHealth());
+        boolean highlight = this.healthUpdateCounter > (long) updateCounter
+                && (this.healthUpdateCounter - (long) updateCounter) / 3L % 2L == 1L;
+
+        if (health < this.playerHealth && player.invulnerableTime > 0) {
+            this.lastSystemTime = Util.getMillis();
+            this.healthUpdateCounter = (updateCounter + 20);
+        } else if (health > this.playerHealth && player.invulnerableTime > 0) {
+            this.lastSystemTime = Util.getMillis();
+            this.healthUpdateCounter = (updateCounter + 10);
         }
 
-        renderHearts(event.getGuiGraphics(), player, X, Y, height, offset, maxHealth, lastHealth, Minecraft.getInstance().gui.displayHealth, absorb, flag);
+        if (Util.getMillis() - this.lastSystemTime > 1000L) {
+            this.playerHealth = health;
+            this.lastPlayerHealth = health;
+            this.lastSystemTime = Util.getMillis();
+        }
+
+        this.playerHealth = health;
+        int healthLast = this.lastPlayerHealth;
+
+        AttributeInstance attrMaxHealth = player.getAttribute(Attributes.MAX_HEALTH);
+        float healthMax = attrMaxHealth == null ? 0 : (float) attrMaxHealth.getValue();
+        float absorb = Mth.ceil(player.getAbsorptionAmount());
+
+        // CHANGE: simulate 10 hearts max if there's more, so vanilla only renders one
+        // row max
+        healthMax = Math.min(healthMax, 20f);
+        health = Math.min(health, 20);
+        absorb = Math.min(absorb, 20);
+
+        int healthRows = Mth.ceil((healthMax + absorb) / 2.0F / 10.0F);
+        int rowHeight = Math.max(10 - (healthRows - 2), 3);
+
+        this.rand.setSeed(updateCounter * 312871L);
+
+        int left = width / 2 - 91;
+        int top = height - left_height;
+        // change: these are unused below, unneeded? should these adjust the Forge
+        // variable?
+        // left_height += (healthRows * rowHeight);
+        // if (rowHeight != 10) left_height += 10 - rowHeight;
+
+        this.regen = -1;
+        if (player.hasEffect(MobEffects.REGENERATION)) {
+            this.regen = updateCounter % 25;
+        }
+
+        assert this.mc.level != null;
+        final int TOP = 9 * (this.mc.level.getLevelData().isHardcore() ? 5 : 0);
+        final int BACKGROUND = (highlight ? 25 : 16);
+        int MARGIN = 16;
+        if (player.hasEffect(MobEffects.POISON))
+            MARGIN += 36;
+        else if (player.hasEffect(MobEffects.WITHER))
+            MARGIN += 72;
+        float absorbRemaining = absorb;
+
+        GuiGraphics matrixStack = event.getGuiGraphics();
+        for (int i = Mth.ceil((healthMax + absorb) / 2.0F) - 1; i >= 0; --i) {
+            int row = Mth.ceil((float) (i + 1) / 10.0F) - 1;
+            int x = left + i % 10 * 8;
+            int y = top - row * rowHeight;
+
+            if (health <= 4)
+                y += this.rand.nextInt(2);
+            if (i == this.regen)
+                y -= 2;
+
+            this.blit(matrixStack, x, y, BACKGROUND, TOP, 9, 9, ICON_VANILLA);
+
+            if (highlight) {
+                if (i * 2 + 1 < healthLast) {
+                    this.blit(matrixStack, x, y, MARGIN + 54, TOP, 9, 9, ICON_VANILLA); // 6
+                } else if (i * 2 + 1 == healthLast) {
+                    this.blit(matrixStack, x, y, MARGIN + 63, TOP, 9, 9, ICON_VANILLA); // 7
+                }
+            }
+
+            if (absorbRemaining > 0.0F) {
+                if (absorbRemaining == absorb && absorb % 2.0F == 1.0F) {
+                    this.blit(matrixStack, x, y, MARGIN + 153, TOP, 9, 9, ICON_VANILLA); // 17
+                    absorbRemaining -= 1.0F;
+                } else {
+                    this.blit(matrixStack, x, y, MARGIN + 144, TOP, 9, 9, ICON_VANILLA); // 16
+                    absorbRemaining -= 2.0F;
+                }
+            } else {
+                if (i * 2 + 1 < health) {
+                    this.blit(matrixStack, x, y, MARGIN + 36, TOP, 9, 9, ICON_VANILLA); // 4
+                } else if (i * 2 + 1 == health) {
+                    this.blit(matrixStack, x, y, MARGIN + 45, TOP, 9, 9, ICON_VANILLA); // 5
+                }
+            }
+        }
+
+        this.renderExtraHearts(matrixStack, left, top, player);
+        this.renderExtraAbsorption(matrixStack, left, top - rowHeight, player);
+
+        RenderSystem.setShaderTexture(0, ICON_VANILLA);
+        gui.leftHeight += 10;
+        if (absorb > 0) {
+            gui.leftHeight += 10;
+        }
+
+        event.setCanceled(true);
+        RenderSystem.disableBlend();
+        this.mc.getProfiler().pop();
+        MinecraftForge.EVENT_BUS
+                .post(new RenderGuiOverlayEvent.Post(mc.getWindow(), event.getGuiGraphics(), event.getPartialTick(), ActualOverlay));
     }
 
-    @OnlyIn(Dist.CLIENT)
-    static enum HeartType {
-        CONTAINER(0, false),
-        NORMAL(1, true),
-        POISONED(2, true),
-        WITHERED(3, true),
-        ABSORBING(5, false),
-        FROZEN(4, false);
-
-        private final int index;
-        private final boolean canBlink;
-
-        private HeartType(int pIndex, boolean pCanBlink) {
-            this.index = pIndex;
-            this.canBlink = pCanBlink;
+    /**
+     * Gets the texture from potion effects
+     *
+     * @param player Player instance
+     * @return Texture offset for potion effects
+     */
+    private int getPotionOffset(Player player) {
+        int potionOffset = 0;
+        MobEffectInstance potion = player.getEffect(MobEffects.WITHER);
+        if (potion != null) {
+            potionOffset = 18;
         }
-
-        public int getX(int rowNum, boolean halfHeart, boolean renderHighlight)
-        {
-            int heart = rowNum + (halfHeart ? 1 : 0) * 9;
-
-            return heart;
+        potion = player.getEffect(MobEffects.POISON);
+        if (potion != null) {
+            potionOffset = 9;
         }
+        assert this.mc.level != null;
+        if (this.mc.level.getLevelData().isHardcore()) {
+            potionOffset += 27;
+        }
+        return potionOffset;
+    }
 
-        public int getY()
-        {
-            switch(this)
-            {
-                case CONTAINER -> {
-                    return 144;
-                }
-                case POISONED -> {
-                    return 9;
-                }
-                case WITHERED -> {
-                    return 18;
-                }
-                case FROZEN -> {
-                    return 27;
-                }
-                case ABSORBING -> {
-                    return 80;
-                }
-                default -> {
-                    // Normal and other unknowns
-                    return 0;
-                }
+    /**
+     * Renders the health above 10 hearts
+     *
+     * @param matrixStack Matrix stack instance
+     * @param xBasePos    Health bar top corner
+     * @param yBasePos    Health bar top corner
+     * @param player      Player instance
+     */
+    private void renderExtraHearts(GuiGraphics matrixStack, int xBasePos, int yBasePos, Player player) {
+        int potionOffset = this.getPotionOffset(player);
+
+        // Extra hearts
+        RenderSystem.setShaderTexture(0, ICON_HEARTS);
+        int hp = Mth.ceil(player.getHealth());
+        this.renderCustomHearts(matrixStack, xBasePos, yBasePos, potionOffset, hp, false);
+    }
+
+    /**
+     * Renders the absorption health above 10 hearts
+     *
+     * @param matrixStack Matrix stack instance
+     * @param xBasePos    Health bar top corner
+     * @param yBasePos    Health bar top corner
+     * @param player      Player instance
+     */
+    private void renderExtraAbsorption(GuiGraphics matrixStack, int xBasePos, int yBasePos, Player player) {
+        int potionOffset = this.getPotionOffset(player);
+
+        // Extra hearts
+        RenderSystem.setShaderTexture(0, ICON_ABSORB);
+        int absorb = Mth.ceil(player.getAbsorptionAmount());
+        this.renderCustomHearts(matrixStack, xBasePos, yBasePos, potionOffset, absorb, true);
+    }
+
+    /**
+     * Gets the texture offset from the regen effect
+     *
+     * @param i      Heart index
+     * @param offset Current offset
+     */
+    private int getYRegenOffset(int i, int offset) {
+        return i + offset == this.regen ? -2 : 0;
+    }
+
+    /**
+     * Shared logic to render custom hearts
+     *
+     * @param matrixStack  Matrix stack instance
+     * @param xBasePos     Health bar top corner
+     * @param yBasePos     Health bar top corner
+     * @param potionOffset Offset from the potion effect
+     * @param count        Number to render
+     * @param absorb       If true, render absorption hearts
+     */
+    private void renderCustomHearts(GuiGraphics matrixStack, int xBasePos, int yBasePos, int potionOffset, int count,
+                                    boolean absorb) {
+        int regenOffset = absorb ? 10 : 0;
+        for (int iter = 0; iter < count / 20; iter++) {
+            int renderHearts = (count - 20 * (iter + 1)) / 2;
+            int heartIndex = iter % 11;
+            if (renderHearts > 10) {
+                renderHearts = 10;
             }
-        }
-
-        static HeartsRenderer.HeartType forPlayer(Player pPlayer) {
-            HeartsRenderer.HeartType hearttype;
-            if (pPlayer.hasEffect(MobEffects.POISON)) {
-                hearttype = POISONED;
-            } else if (pPlayer.hasEffect(MobEffects.WITHER)) {
-                hearttype = WITHERED;
-            } else if (pPlayer.isFullyFrozen()) {
-                hearttype = FROZEN;
-            } else {
-                hearttype = NORMAL;
+            for (int i = 0; i < renderHearts; i++) {
+                int y = this.getYRegenOffset(i, regenOffset);
+                if (absorb) {
+                    this.blit(matrixStack, xBasePos + 8 * i, yBasePos + y, 0, 54, 9, 9, ICON_ABSORB);
+                }
+                this.blit(matrixStack, xBasePos + 8 * i, yBasePos + y, 18 * heartIndex, potionOffset, 9, 9, ICON_HEARTS);
             }
-
-            return hearttype;
+            if (count % 2 == 1 && renderHearts < 10) {
+                int y = this.getYRegenOffset(renderHearts, regenOffset);
+                if (absorb) {
+                    this.blit(matrixStack, xBasePos + 8 * renderHearts, yBasePos + y, 0, 54, 9, 9, ICON_ABSORB);
+                }
+                this.blit(matrixStack, xBasePos + 8 * renderHearts, yBasePos + y, 9 + 18 * heartIndex, potionOffset, 9, 9, ICON_HEARTS);
+            }
         }
     }
 }
