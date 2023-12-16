@@ -34,7 +34,6 @@ public class WMDClientConfig {
         BUILDER.pop();
 
         BUILDER.push("General");
-        EnableExtraHearts = BUILDER.comment("Whether to enable the extra hearts rendering").define("compress_hearts", true);
         EnableHealthAlert = BUILDER.comment("The following was added for a friend. If you need reminders to eat in order to heal, turn the below option on").define("watchMyHealth", false);
         EnableHungerAlert = BUILDER.comment("This is a newer setting to watch your hunger status instead of your hunger to alert when you need to eat").define("watchMyHunger", true);
 
