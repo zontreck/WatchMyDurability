@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.mcmods.configs.WMDClientConfig;
+import dev.zontreck.mcmods.gui.HeartsRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.sounds.SoundEvent;
@@ -55,7 +56,7 @@ public class WatchMyDurability
         modEventBus.addListener(this::commonSetup);
         ModLoadingContext.get().registerConfig(Type.CLIENT, WMDClientConfig.SPEC, "watchmydurability-client.toml");
         
-        //MinecraftForge.EVENT_BUS.register(new HeartsRenderer());
+        MinecraftForge.EVENT_BUS.register(new HeartsRenderer());
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
