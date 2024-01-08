@@ -1,7 +1,7 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven { url = "https://maven.zontreck.dev/repository/internal" }
+        maven { url = "https://maven.zontreck.com/repository/internal" }
     }
 }
 

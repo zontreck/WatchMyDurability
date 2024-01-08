@@ -123,7 +123,7 @@ repositories {
     // }
     maven {
         name = "Aria's Creations Caches"
-        url = "https://maven.zontreck.dev/repository/internal"
+        url = "https://maven.zontreck.com/repository/internal"
     }
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
@@ -140,7 +140,7 @@ repositories {
 
     maven {
         name = "zontreck Maven"
-        url = "https://maven.zontreck.dev/repository/zontreck"
+        url = "https://maven.zontreck.com/repository/zontreck"
     }
 }
 
