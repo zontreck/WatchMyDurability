@@ -1,42 +1,38 @@
-package dev.zontreck.mcmods;
+package dev.zontreck.wmd;
 
 import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.libzontreck.chat.ChatColor;
-import dev.zontreck.mcmods.configs.WMDClientConfig;
+import dev.zontreck.wmd.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 
-public class CheckHealth extends Task
+public class CheckHunger extends Task
 {
-    private static CheckHealth inst = new CheckHealth();
-    public static CheckHealth getInstance()
+    private static CheckHunger inst = new CheckHunger();
+    public static CheckHunger getInstance()
     {
         return inst;
     }
-    public CheckHealth() {
-        super("CheckHealth", true);
+    public CheckHunger()
+    {
+        super("CheckHunger", true);
     }
 
     @Override
     public void run() {
+        if(!WMDClientConfig.EnableHungerAlert.get()) return;
 
 
-        // Hijack this timer so we dont need to register yet another
-        if(!WMDClientConfig.EnableHealthAlert.get())return;
+        Hunger current = Hunger.of(Minecraft.getInstance().player);
+        if(WatchMyDurability.LastHunger == null)WatchMyDurability.LastHunger = new Hunger();
 
-
-        Health current = Health.of(Minecraft.getInstance().player);
-        if(WatchMyDurability.LastHealth == null)WatchMyDurability.LastHealth = current;
-        else{
-            if(current.identical(WatchMyDurability.LastHealth))return;
-        }
-
-        // Good to proceed
+        if(current.identical()) return;
         if(current.shouldGiveAlert())
         {
+
             String Msg = ChatColor.doColors("!Dark_Red!!bold!You need to eat!");
             Component chat = Component.literal(Msg);
             Minecraft.getInstance().player.displayClientMessage(chat, false);
@@ -45,6 +41,8 @@ public class CheckHealth extends Task
             WatchMyDurability.Soundify(sv);
         }
 
-        WatchMyDurability.LastHealth=current;
+        WatchMyDurability.LastHunger = current;
+
+
     }
 }
