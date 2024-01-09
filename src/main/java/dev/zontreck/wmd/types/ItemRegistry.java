@@ -1,8 +1,9 @@
-package dev.zontreck.wmd;
+package dev.zontreck.wmd.types;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import dev.zontreck.wmd.WatchMyDurability;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemRegistry {

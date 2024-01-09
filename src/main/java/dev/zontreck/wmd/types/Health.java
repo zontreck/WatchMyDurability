@@ -1,4 +1,4 @@
-package dev.zontreck.wmd;
+package dev.zontreck.wmd.types;
 
 import net.minecraft.world.entity.player.Player;
 

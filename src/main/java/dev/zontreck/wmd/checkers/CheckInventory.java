@@ -1,13 +1,14 @@
-package dev.zontreck.wmd;
+package dev.zontreck.wmd.checkers;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import dev.zontreck.ariaslib.terminal.Task;
-import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.libzontreck.chat.HoverTip;
+import dev.zontreck.wmd.types.ItemRegistry;
+import dev.zontreck.wmd.WatchMyDurability;
 import dev.zontreck.wmd.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;

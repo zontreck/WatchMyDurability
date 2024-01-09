@@ -4,7 +4,13 @@ import com.mojang.logging.LogUtils;
 
 import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.libzontreck.chat.ChatColor;
+import dev.zontreck.wmd.checkers.CheckHealth;
+import dev.zontreck.wmd.checkers.CheckHunger;
+import dev.zontreck.wmd.checkers.CheckInventory;
 import dev.zontreck.wmd.configs.WMDClientConfig;
+import dev.zontreck.wmd.types.Health;
+import dev.zontreck.wmd.types.Hunger;
+import dev.zontreck.wmd.types.ItemRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.sounds.SoundEvent;

@@ -1,8 +1,9 @@
-package dev.zontreck.wmd;
+package dev.zontreck.wmd.checkers;
 
 import dev.zontreck.ariaslib.terminal.Task;
-import dev.zontreck.ariaslib.util.DelayedExecutorService;
 import dev.zontreck.libzontreck.chat.ChatColor;
+import dev.zontreck.wmd.types.Hunger;
+import dev.zontreck.wmd.WatchMyDurability;
 import dev.zontreck.wmd.configs.WMDClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;

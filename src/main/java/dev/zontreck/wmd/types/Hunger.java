@@ -1,5 +1,6 @@
-package dev.zontreck.wmd;
+package dev.zontreck.wmd.types;
 
+import dev.zontreck.wmd.WatchMyDurability;
 import net.minecraft.world.entity.player.Player;
 
 public class Hunger
