@@ -7,13 +7,15 @@ import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.wmd.checkers.CheckHealth;
 import dev.zontreck.wmd.checkers.CheckHunger;
 import dev.zontreck.wmd.checkers.CheckInventory;
+import dev.zontreck.wmd.commands.ModCommands;
 import dev.zontreck.wmd.configs.WMDClientConfig;
+import dev.zontreck.wmd.networking.ModMessages;
 import dev.zontreck.wmd.types.Health;
 import dev.zontreck.wmd.types.Hunger;
 import dev.zontreck.wmd.types.ItemRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
-import net.minecraft.sounds.SoundEvent;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -45,13 +47,12 @@ public class WatchMyDurability
     public static ItemRegistry REGISTRY;
     public static Health LastHealth;
     public static Hunger LastHunger;
-    public static String WMDPrefix;
 
+    public static boolean WMD_SERVER_AVAILABLE =false;
     
 
     public WatchMyDurability()
     {
-        WatchMyDurability.WMDPrefix = ChatColor.doColors("!Dark_Gray![!Bold!!Dark_Green!WMD!Reset!!Dark_Gray!]!reset!");
         
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
@@ -61,20 +62,17 @@ public class WatchMyDurability
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new ModCommands());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
         // Some common setup code
         //LOGGER.info("HELLO FROM COMMON SETUP");
+        ModMessages.register();
     }
 
 
-    public static void Soundify(SoundEvent sound)
-    {
-        //WatchMyDurability.LOGGER.info("PLAY ALERT SOUND");
-        Minecraft.getInstance().player.playSound(sound, 1.0f, 1.0f);
-    }
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
@@ -84,7 +82,7 @@ public class WatchMyDurability
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
         static Timer time = new Timer();
@@ -92,7 +90,7 @@ public class WatchMyDurability
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            LOGGER.info(WMDPrefix+": : : CLIENT SETUP : : :");
+            LOGGER.info(": : : CLIENT SETUP : : :");
             // Some client setup code
             //LOGGER.info("HELLO FROM CLIENT SETUP");
             //LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
@@ -110,7 +108,7 @@ public class WatchMyDurability
 
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
     public static class ClientEvents
     {
     
@@ -118,7 +116,7 @@ public class WatchMyDurability
         public static void onJoin(ClientPlayerNetworkEvent.LoggingIn event){
             // Joined
             //LOGGER.info("PLAYER LOGGED IN");
-            LOGGER.info(WMDPrefix+": : : PLAYER LOGGED IN : : :");
+            LOGGER.info(": : : PLAYER LOGGED IN : : :");
             WatchMyDurability.isInGame=true;
             DelayedExecutorService.start();
 
@@ -130,15 +128,16 @@ public class WatchMyDurability
         @SubscribeEvent
         public static void onLeave(ClientPlayerNetworkEvent.LoggingOut event){
             //LOGGER.info("PLAYER LOGGED OUT");
-            LOGGER.info(WMDPrefix+": : : PLAYER LOGGED OUT : : :");
+            LOGGER.info(": : : PLAYER LOGGED OUT : : :");
             WatchMyDurability.isInGame=false;
+            WatchMyDurability.WMD_SERVER_AVAILABLE=false;
             DelayedExecutorService.stop();
         }
 
         @SubscribeEvent
         public static void onClone(ClientPlayerNetworkEvent.Clone event)
         {
-            LOGGER.info(WMDPrefix+": : : : PLAYER RESPAWNED OR MOVED TO A NEW WORLD : : : :");
+            LOGGER.info(": : : : PLAYER RESPAWNED OR MOVED TO A NEW WORLD : : : :");
             
         }
     }

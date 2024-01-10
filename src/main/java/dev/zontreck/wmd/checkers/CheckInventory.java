@@ -7,9 +7,11 @@ import java.util.Map;
 import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.libzontreck.chat.HoverTip;
+import dev.zontreck.libzontreck.util.ChatHelpers;
 import dev.zontreck.wmd.types.ItemRegistry;
 import dev.zontreck.wmd.WatchMyDurability;
 import dev.zontreck.wmd.configs.WMDClientConfig;
+import dev.zontreck.wmd.utils.client.Helpers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -34,6 +36,7 @@ public class CheckInventory extends Task {
     @Override
     public void run() {
 
+        if(!WMDClientConfig.EnableToolWatcher.get()) return;
         try {
                 
             if(!WatchMyDurability.isInGame)return;
@@ -95,11 +98,11 @@ public class CheckInventory extends Task {
                     String entryStr = WMDClientConfig.alertMessages.get().get(idx);
 
                     if(percent <= entry){
-                        String replaced = WatchMyDurability.WMDPrefix + ChatColor.DARK_RED + entryStr.replaceAll("!item!", is1.getDisplayName().getString());
+                        String replaced = ChatColor.doColors(WMDClientConfig.WMD_PREFIX.get()) + ChatColor.DARK_RED + entryStr.replaceAll("!item!", is1.getDisplayName().getString());
                         WatchMyDurability.LOGGER.info("Enqueue alert for an item. Playing sound for item: "+is1.getDisplayName().getString());
                         
                         SoundEvent theSound = SoundEvents.ITEM_BREAK;
-                        WatchMyDurability.Soundify(theSound);
+                        Helpers.Soundify(theSound);
                         
                         
                         

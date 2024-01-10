@@ -3,6 +3,7 @@ package dev.zontreck.wmd.configs;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class WMDClientConfig {
@@ -12,9 +13,12 @@ public class WMDClientConfig {
     public static ForgeConfigSpec.ConfigValue<List<Integer>> alertPercents;
     public static ForgeConfigSpec.ConfigValue<List<String>> alertMessages;
     public static ForgeConfigSpec.ConfigValue<Integer> TimerVal;
-    public static ForgeConfigSpec.ConfigValue<Boolean> EnableExtraHearts;
     public static ForgeConfigSpec.ConfigValue<Boolean> EnableHealthAlert;
     public static ForgeConfigSpec.ConfigValue<Boolean> EnableHungerAlert;
+    public static ForgeConfigSpec.ConfigValue<Boolean> EnableToolWatcher;
+
+
+    public static ForgeConfigSpec.ConfigValue<String> WMD_PREFIX;
 
     static{
         List<Integer> alerts1 = new ArrayList<>();
@@ -35,8 +39,40 @@ public class WMDClientConfig {
 
         BUILDER.push("General");
         EnableHealthAlert = BUILDER.comment("The following was added for a friend. If you need reminders to eat in order to heal, turn the below option on").define("watchMyHealth", false);
-        EnableHungerAlert = BUILDER.comment("This is a newer setting to watch your hunger status instead of your hunger to alert when you need to eat").define("watchMyHunger", true);
+        EnableHungerAlert = BUILDER.comment("This is a newer setting to watch your hunger status instead of your hunger to alert when you need to eat").define("watchMyHunger", false);
+        EnableToolWatcher = BUILDER.comment("Enable watching tool durability").define("watchDurability", true);
+        BUILDER.pop();
+
+
+        BUILDER.push("Messages");
+
+        WMD_PREFIX = BUILDER.comment("The prefix string for WMD").define("prefix", "!Dark_Gray![!Bold!!Dark_Green!WMD!Reset!!Dark_Gray!]!Reset!");
 
         SPEC=BUILDER.build();
+    }
+
+    public static CompoundTag serialize()
+    {
+        CompoundTag ret = new CompoundTag();
+
+        ret.putBoolean("watchMyHealth", EnableHealthAlert.get());
+        ret.putBoolean("watchMyHunger", EnableHungerAlert.get());
+        ret.putBoolean("watchDurability", EnableToolWatcher.get());
+
+
+
+        return ret;
+    }
+
+    public static void deserialize(CompoundTag tag)
+    {
+        EnableHealthAlert.set(tag.getBoolean("watchMyHealth"));
+        EnableHealthAlert.save();
+
+        EnableHungerAlert.set(tag.getBoolean("watchMyHunger"));
+        EnableHungerAlert.save();
+
+        EnableToolWatcher.set(tag.getBoolean("watchDurability"));
+        EnableToolWatcher.save();
     }
 }
