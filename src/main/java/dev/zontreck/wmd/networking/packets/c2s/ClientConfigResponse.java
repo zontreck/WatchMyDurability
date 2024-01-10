@@ -4,6 +4,7 @@ import dev.zontreck.libzontreck.chat.ChatColor;
 import dev.zontreck.libzontreck.chestgui.ChestGUI;
 import dev.zontreck.libzontreck.chestgui.ChestGUIButton;
 import dev.zontreck.libzontreck.chestgui.ChestGUIIdentifier;
+import dev.zontreck.libzontreck.items.ModItems;
 import dev.zontreck.libzontreck.lore.LoreEntry;
 import dev.zontreck.libzontreck.util.ServerUtilities;
 import dev.zontreck.libzontreck.vectors.Vector2i;
@@ -104,16 +105,16 @@ public class ClientConfigResponse
                                 .withInfo(new LoreEntry.Builder().text(ChatColor.doColors("!Dark_Green!Status: " + (enableHealth ? "!Dark_Green!Enabled" : "!Dark_Red!Disabled"))).build())
                 );
 
-                prompt.withReset(()->{
+                prompt.withButton(new ChestGUIButton(ModItems.CHESTGUI_RESET.get(), "Reset", ()->{
                     ModMessages.sendToPlayer(new S2CResetConfig(), ServerUtilities.getPlayerByID(id.toString()));
 
                     prompt.close();
 
                     ModMessages.sendToPlayer(new RequestClientConfig(), player);
-                });
 
+                }, new Vector2i(2,4)));
 
-                prompt.updateUtilityButtons();
+                prompt.hasReset=false;
                 prompt.open();
             }catch(Exception e)
             {
