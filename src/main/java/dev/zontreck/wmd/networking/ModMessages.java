@@ -31,31 +31,31 @@ public class ModMessages
         net.messageBuilder(WMDServerAvailable.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(WMDServerAvailable::toBytes)
                 .decoder(WMDServerAvailable::new)
-                .consumerMainThread(WMDServerAvailable::handle)
+                .consumer(WMDServerAvailable::handle)
                 .add();
 
         net.messageBuilder(S2CResetConfig.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(S2CResetConfig::toBytes)
                 .decoder(S2CResetConfig::new)
-                .consumerMainThread(S2CResetConfig::handle)
+                .consumer(S2CResetConfig::handle)
                 .add();
 
         net.messageBuilder(RequestClientConfig.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(RequestClientConfig::toBytes)
                 .decoder(RequestClientConfig::new)
-                .consumerMainThread(RequestClientConfig::handle)
+                .consumer(RequestClientConfig::handle)
                 .add();
 
         net.messageBuilder(ClientConfigResponse.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .encoder(ClientConfigResponse::toBytes)
                 .decoder(ClientConfigResponse::new)
-                .consumerMainThread(ClientConfigResponse::handle)
+                .consumer(ClientConfigResponse::handle)
                 .add();
 
         net.messageBuilder(PushClientConfigUpdate.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(PushClientConfigUpdate::toBytes)
                 .decoder(PushClientConfigUpdate::new)
-                .consumerMainThread(PushClientConfigUpdate::handle)
+                .consumer(PushClientConfigUpdate::handle)
                 .add();
     }
 

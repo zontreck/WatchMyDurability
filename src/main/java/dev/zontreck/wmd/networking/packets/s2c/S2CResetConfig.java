@@ -29,16 +29,16 @@ public class S2CResetConfig
         ctx.enqueueWork(()->
         {
 
-            WMDClientConfig.WMD_PREFIX.set(WMDClientConfig.WMD_PREFIX.getDefault());
+            WMDClientConfig.WMD_PREFIX.set("!Dark_Gray![!Bold!!Dark_Green!WMD!Reset!!Dark_Gray!]!Reset!");
             WMDClientConfig.WMD_PREFIX.save();
 
-            WMDClientConfig.EnableHealthAlert.set(WMDClientConfig.EnableHealthAlert.getDefault());
+            WMDClientConfig.EnableHealthAlert.set(false);
             WMDClientConfig.EnableHealthAlert.save();
 
-            WMDClientConfig.EnableHungerAlert.set(WMDClientConfig.EnableHungerAlert.getDefault());
+            WMDClientConfig.EnableHungerAlert.set(false);
             WMDClientConfig.EnableHealthAlert.save();
 
-            WMDClientConfig.EnableToolWatcher.set(WMDClientConfig.EnableToolWatcher.getDefault());
+            WMDClientConfig.EnableToolWatcher.set(true);
             WMDClientConfig.EnableToolWatcher.save();
         });
     }

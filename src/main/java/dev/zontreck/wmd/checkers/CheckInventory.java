@@ -106,7 +106,7 @@ public class CheckInventory extends Task {
                         
                         
                         
-                        MutableComponent X = Component.literal(replaced);
+                        MutableComponent X = ChatHelpers.macro(replaced);
                         
                         HoverEvent he = HoverTip.getItem(is1);
                         Style s = Style.EMPTY.withFont(Style.DEFAULT_FONT).withHoverEvent(he);

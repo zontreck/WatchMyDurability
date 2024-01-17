@@ -2,6 +2,7 @@ package dev.zontreck.wmd.checkers;
 
 import dev.zontreck.ariaslib.terminal.Task;
 import dev.zontreck.libzontreck.chat.ChatColor;
+import dev.zontreck.libzontreck.util.ChatHelpers;
 import dev.zontreck.wmd.types.Health;
 import dev.zontreck.wmd.WatchMyDurability;
 import dev.zontreck.wmd.configs.WMDClientConfig;
@@ -40,10 +41,10 @@ public class CheckHealth extends Task
         if(current.shouldGiveAlert())
         {
             String Msg = ChatColor.doColors("!Dark_Red!!bold!You need to eat!");
-            Component chat = Component.literal(Msg);
+            Component chat = ChatHelpers.macro(Msg);
             Minecraft.getInstance().player.displayClientMessage(chat, false);
 
-            SoundEvent sv = SoundEvents.WARDEN_ROAR; // It sounds like a growling stomach
+            SoundEvent sv = SoundEvents.ENDER_DRAGON_GROWL;
             Helpers.Soundify(sv);
         }
 

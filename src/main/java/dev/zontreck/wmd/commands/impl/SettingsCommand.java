@@ -1,6 +1,7 @@
 package dev.zontreck.wmd.commands.impl;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.zontreck.wmd.networking.ModMessages;
 import dev.zontreck.wmd.networking.packets.s2c.RequestClientConfig;
 import net.minecraft.commands.CommandSourceStack;
@@ -15,7 +16,11 @@ public class SettingsCommand
 
     public static int settingsPrompt(CommandSourceStack sender)
     {
-        ModMessages.sendToPlayer(new RequestClientConfig(), sender.getPlayer());
+        try {
+            ModMessages.sendToPlayer(new RequestClientConfig(), sender.getPlayerOrException());
+        } catch (CommandSyntaxException e) {
+            throw new RuntimeException(e);
+        }
         return 0;
     }
 }
