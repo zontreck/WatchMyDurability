@@ -113,7 +113,7 @@ public class WatchMyDurability
     {
     
         @SubscribeEvent
-        public static void onJoin(ClientPlayerNetworkEvent.LoggedInEvent event){
+        public static void onJoin(ClientPlayerNetworkEvent.LoggingIn event){
             // Joined
             //LOGGER.info("PLAYER LOGGED IN");
             LOGGER.info(": : : PLAYER LOGGED IN : : :");
@@ -126,7 +126,7 @@ public class WatchMyDurability
         }
     
         @SubscribeEvent
-        public static void onLeave(ClientPlayerNetworkEvent.LoggedOutEvent event){
+        public static void onLeave(ClientPlayerNetworkEvent.LoggingOut event){
             //LOGGER.info("PLAYER LOGGED OUT");
             LOGGER.info(": : : PLAYER LOGGED OUT : : :");
             WatchMyDurability.isInGame=false;
@@ -135,7 +135,7 @@ public class WatchMyDurability
         }
 
         @SubscribeEvent
-        public static void onClone(ClientPlayerNetworkEvent.RespawnEvent event)
+        public static void onClone(ClientPlayerNetworkEvent.Clone event)
         {
             LOGGER.info(": : : : PLAYER RESPAWNED OR MOVED TO A NEW WORLD : : : :");
             

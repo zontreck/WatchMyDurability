@@ -18,7 +18,6 @@ import dev.zontreck.wmd.networking.packets.s2c.S2CResetConfig;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -61,7 +60,7 @@ public class ClientConfigResponse {
             try {
                 ChestGUI prompt = ChestGUI.builder().withGUIId(new ChestGUIIdentifier("wmdsettings")).withPlayer(player.getUUID()).withTitle("WMD Settings");
                 ItemStack wtd = new ItemStack(Items.DIAMOND_PICKAXE, 1);
-                wtd.setHoverName(new TextComponent("Watch Tool Durability"));
+                wtd.setHoverName(Component.literal("Watch Tool Durability"));
 
                 prompt.withButton(new ChestGUIButton(wtd, (stack, container, lore) -> {
                             var wd = !tag.getBoolean("watchDurability");
@@ -80,7 +79,7 @@ public class ClientConfigResponse {
                 );
 
                 ItemStack wmhunger = new ItemStack(Items.APPLE, 1);
-                wmhunger.setHoverName(new TextComponent("Watch My Hunger"));
+                wmhunger.setHoverName(Component.literal("Watch My Hunger"));
 
                 prompt.withButton(new ChestGUIButton(wmhunger, (stack, container, lore) -> {
                             var eh = !tag.getBoolean("watchMyHunger");
@@ -95,7 +94,7 @@ public class ClientConfigResponse {
                                 .withInfo(new LoreEntry.Builder().text(ChatColor.doColors("!Dark_Green!Status: " + (enableHunger ? "!Dark_Green!Enabled" : "!Dark_Red!Disabled"))).build())
                 );
                 ItemStack wmhealth = new ItemStack(Items.PUFFERFISH, 1);
-                wmhealth.setHoverName(new TextComponent("Watch My Health"));
+                wmhealth.setHoverName(Component.literal("Watch My Health"));
 
                 prompt.withButton(new ChestGUIButton(wmhealth, (stack, container, lore) -> {
                             var eh = !tag.getBoolean("watchMyHealth");

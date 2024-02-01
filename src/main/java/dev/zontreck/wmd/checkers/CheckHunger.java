@@ -40,7 +40,7 @@ public class CheckHunger extends Task
             Component chat = ChatHelpers.macro(Msg);
             Minecraft.getInstance().player.displayClientMessage(chat, false);
 
-            SoundEvent sv = SoundEvents.ENDER_DRAGON_GROWL; // It sounds like a growling stomach
+            SoundEvent sv = SoundEvents.WARDEN_ROAR; // It sounds like a growling stomach
             Helpers.Soundify(sv);
         }
 

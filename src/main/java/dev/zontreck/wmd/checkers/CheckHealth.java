@@ -44,7 +44,7 @@ public class CheckHealth extends Task
             Component chat = ChatHelpers.macro(Msg);
             Minecraft.getInstance().player.displayClientMessage(chat, false);
 
-            SoundEvent sv = SoundEvents.ENDER_DRAGON_GROWL;
+            SoundEvent sv = SoundEvents.WARDEN_ROAR;
             Helpers.Soundify(sv);
         }
 
