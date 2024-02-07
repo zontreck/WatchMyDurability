@@ -16,6 +16,11 @@ base {
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
     // The mappings can be changed at any time and must be in the following format.
@@ -192,16 +197,25 @@ tasks.named('jar', Jar).configure {
 //     dependsOn 'reobfJar'
 // }
 
-// Example configuration to allow publishing using the maven-publish plugin
+def MAVEN_PASSWORD_PROPERTY = "AriasCreationsMavenPassword"
 publishing {
     publications {
-        register('mavenJava', MavenPublication) {
+        mavenJava(MavenPublication) {
             artifact jar
+            artifact sourcesJar
+            artifact javadocJar
         }
     }
     repositories {
         maven {
-            url "file://${project.projectDir}/mcmodsrepo"
+            url = "https://maven.zontreck.com/repository/zontreck"
+            name = "ariascreations"
+            if (project.findProperty(MAVEN_PASSWORD_PROPERTY) != null) {
+                credentials {
+                    username = "admin"
+                    password = project.findProperty(MAVEN_PASSWORD_PROPERTY)
+                }
+            }
         }
     }
 }
