@@ -66,7 +66,7 @@ description='''${mod_description}'''
 [[dependencies.${mod_id}]]
     modId="libzontreck"
     mandatory=true
-    versionRange="[1.10,1.11)"
+    versionRange="[1201.11,1201.12)"
     ordering="NONE"
     side="BOTH"
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
